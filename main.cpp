@@ -12,36 +12,12 @@
 #include <iomanip>
 #include <vector>
 #include "CacheSetQueue.h"
+#include <math.h>
 
 using namespace std;
 
-string GetBinaryStringFromHexString (string sHex)
-{
-    string sReturn = "";
-    for (int i = 0; i < sHex.length (); ++i)
-    {
-        switch (sHex [i])
-        {
-            case '0': sReturn.append ("0000"); break;
-            case '1': sReturn.append ("0001"); break;
-            case '2': sReturn.append ("0010"); break;
-            case '3': sReturn.append ("0011"); break;
-            case '4': sReturn.append ("0100"); break;
-            case '5': sReturn.append ("0101"); break;
-            case '6': sReturn.append ("0110"); break;
-            case '7': sReturn.append ("0111"); break;
-            case '8': sReturn.append ("1000"); break;
-            case '9': sReturn.append ("1001"); break;
-            case 'a': sReturn.append ("1010"); break;
-            case 'b': sReturn.append ("1011"); break;
-            case 'c': sReturn.append ("1100"); break;
-            case 'd': sReturn.append ("1101"); break;
-            case 'e': sReturn.append ("1110"); break;
-            case 'f': sReturn.append ("1111"); break;
-        }
-    }
-    return sReturn;
-}
+string hexStringToBinaryString(string);
+int binaryStringToDecimal(string binary);
 
 int main(int argc, const char * argv[])
 {
@@ -52,7 +28,7 @@ int main(int argc, const char * argv[])
     int N = 32; //Num Sets
     int hitCount = 0;
     int missCount = 0;
-    bool isFIFO = true;
+    bool isFIFO = false;
     
     ifstream inFile;
     inFile.open ("TRACE1.DAT" , ifstream::binary);
@@ -81,7 +57,7 @@ int main(int argc, const char * argv[])
         
         if(i%3 == 2)
         {
-          //  cout << memRefs[i/3] << endl;
+            //  cout << memRefs[i/3] << endl;
             countMemRefs++;
         }
     }
@@ -90,14 +66,8 @@ int main(int argc, const char * argv[])
     
     for (int i = 0; i < length/3; i++)
     {
-        binaryMemRefs[i] = GetBinaryStringFromHexString(memRefs[i]);
+        binaryMemRefs[i] = hexStringToBinaryString(memRefs[i]);
     }
-    
-   /* for (int i = 0; i < length/3; i++)
-    {
-        cout << memRefs[i] << endl;
-        cout << binaryMemRefs[i] << endl;
-    }*/
     
     //less than 60,000?
     cout << "Num memrefs is " << countMemRefs << endl;
@@ -108,27 +78,77 @@ int main(int argc, const char * argv[])
     {
         cacheLines[i] = CacheSetQueue(N, isFIFO);
     }
-  
-    cacheLines[1].addToQueue("1");
-    cacheLines[1].addToQueue("2");
-    cacheLines[1].addToQueue("3");
-    cacheLines[1].addToQueue("4");
-    cacheLines[1].addToQueue("5");
-    cacheLines[1].addToQueue("6");
-    cacheLines[1].addToQueue("4");
-    cacheLines[1].addToQueue("7");
     
-    
-    
-    for (int i = 0; i < N; i++)
+    int numIndexBits = log2(K);  //calculate number of index bits
+    for (int i = 0; i < length/3; i++)
     {
-        cout << cacheLines[1].getTag(i) << endl;
+        int lineIndex = binaryStringToDecimal(binaryMemRefs[i].substr(20-numIndexBits, numIndexBits));  //extract index from address
+        string tag = binaryMemRefs[i].substr(0, 20-numIndexBits);  //extract tag from address
+        
+        if(cacheLines[lineIndex].addToQueue(tag))  //
+            hitCount++;
+        else
+            missCount++;
     }
     
-    
+    /*for (int i = 0; i < cacheLines[1].getSize(); i++)
+    {
+        cout << cacheLines[1].getTag(i) << endl;
+    }*/
+    cout << "Num Misses: " << missCount << endl;
+    cout << "Num Hits: " << hitCount << endl;
     
     return 0;
 }
+
+
+string hexStringToBinaryString(string sHex)
+{
+    string sReturn = "";
+    for (int i = 0; i < sHex.length (); ++i)
+    {
+        switch (sHex [i])
+        {
+            case '0': sReturn.append ("0000"); break;
+            case '1': sReturn.append ("0001"); break;
+            case '2': sReturn.append ("0010"); break;
+            case '3': sReturn.append ("0011"); break;
+            case '4': sReturn.append ("0100"); break;
+            case '5': sReturn.append ("0101"); break;
+            case '6': sReturn.append ("0110"); break;
+            case '7': sReturn.append ("0111"); break;
+            case '8': sReturn.append ("1000"); break;
+            case '9': sReturn.append ("1001"); break;
+            case 'a': sReturn.append ("1010"); break;
+            case 'b': sReturn.append ("1011"); break;
+            case 'c': sReturn.append ("1100"); break;
+            case 'd': sReturn.append ("1101"); break;
+            case 'e': sReturn.append ("1110"); break;
+            case 'f': sReturn.append ("1111"); break;
+        }
+    }
+    return sReturn;
+}
+
+int binaryStringToDecimal(string binary)
+{
+    int n = atoi(binary.c_str());
+    int output = 0;
+    
+    int m = 1;
+    
+    for(int i=0; n > 0; i++) {
+        
+        if(n % 10 == 1) {
+            output += m;
+        }
+        n /= 10;
+        m <<= 1;
+    }
+    
+    return output;
+}
+
 
 
 

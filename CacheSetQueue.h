@@ -5,8 +5,8 @@
 //  Created by Chris Springer on 2/17/15.
 //
 
-#ifndef ____setQueue__
-#define ____setQueue__
+#ifndef ____CacheSetQueue__
+#define ____CacheSetQueue__
 
 #include <stdio.h>
 #include <iostream>
@@ -21,12 +21,14 @@ private:
     int numSets;
     bool isFIFO;
     deque<string> setQueue;
+    
 public:
     CacheSetQueue() {}
     CacheSetQueue(int nSets, bool bFIFO);
     bool addToQueue(string);
     int getSize();
     string getTag(int);
+    
 };
 
-#endif /* defined(____setQueue__) */
+#endif /* defined(____CacheSetQueue__) */
