@@ -16,7 +16,7 @@ CacheSetQueue::CacheSetQueue(int nSets, bool bFIFO)
 
 bool CacheSetQueue::addToQueue(string tag)
 {
-    if (isFIFO)  //FIFO Policy
+    if (isFIFO) //FIFO Policy
     {
         for (int i = 0; i < setQueue.size(); i++)
         {
