@@ -48,8 +48,11 @@ int main(int argc, const char * argv[])
     int length;
     
     //for Sim 1 only, will have to perform all simulations
-    int K = 2;  //
-    int N = 5; //Num Sets
+    int K = 2;  // Num Lines per Set
+    int N = 32; //Num Sets
+    int hitCount = 0;
+    int missCount = 0;
+    bool isFIFO = true;
     
     ifstream inFile;
     inFile.open ("TRACE1.DAT" , ifstream::binary);
@@ -99,13 +102,28 @@ int main(int argc, const char * argv[])
     //less than 60,000?
     cout << "Num memrefs is " << countMemRefs << endl;
     
-    //creates array of Queues for each line of cache 
+    //creates array of Queues for each line of cache
     CacheSetQueue* cacheLines = new CacheSetQueue[K];
     for (int i = 0; i < K; i++)
     {
-        cacheLines[i] = CacheSetQueue(N);
+        cacheLines[i] = CacheSetQueue(N, isFIFO);
     }
+  
+    cacheLines[1].addToQueue("1");
+    cacheLines[1].addToQueue("2");
+    cacheLines[1].addToQueue("3");
+    cacheLines[1].addToQueue("4");
+    cacheLines[1].addToQueue("5");
+    cacheLines[1].addToQueue("6");
+    cacheLines[1].addToQueue("4");
+    cacheLines[1].addToQueue("7");
     
+    
+    
+    for (int i = 0; i < N; i++)
+    {
+        cout << cacheLines[1].getTag(i) << endl;
+    }
     
     
     
