@@ -224,7 +224,7 @@ int main(int argc, const char * argv[])
             default:
                 break;
         }
-        int length;
+        int length; //number of bytes
         int hitCount = 0;
         int missCount = 0;
         
@@ -237,23 +237,25 @@ int main(int argc, const char * argv[])
         }
         
         inFile.seekg (0, ios::end);
-        length = (int)inFile.tellg();
+        length = (int)inFile.tellg(); //position at end of file is number of bytes
         inFile.seekg (0, ios::beg);
         
-        char data[length];
+        char data[length];  //individual bytes
         
         inFile.read(data, length);
         inFile.close();
         
-        vector<string> memRefs(length/3);
+        vector<string> memRefs(length/3); //vector of strings representing 3 byte words
+        
+        
         int countMemRefs = 0;
         for (int i = 0; i < length; i++)
         {
             stringstream ss;
-            ss << hex << setw(2) << setfill('0') << (int)(unsigned char)data[i];
-            memRefs[i/3].insert(0,ss.str());
+            ss << hex << setw(2) << setfill('0') << (int)(unsigned char)data[i]; //one byte
+            memRefs[i/3].insert(0,ss.str());  //append byte to three byte word
             
-            if(i%3 == 2)
+            if(i%3 == 2)  //increment reference count every 3 bytes
             {
                 countMemRefs++;
             }
