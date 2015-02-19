@@ -52,8 +52,3 @@ int CacheSetQueue::getSize()
 {
     return setQueue.size();  //return num memory references in queue
 }
-
-string CacheSetQueue::getTag(int index)
-{
-    return setQueue.at(index);  //return tag of memory reference at given location
-}

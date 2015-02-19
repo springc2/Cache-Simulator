@@ -27,7 +27,6 @@ public:
     CacheSetQueue(int nSets, bool bFIFO);
     bool addToQueue(string);
     int getSize();
-    string getTag(int);
     
 };
 

@@ -255,7 +255,6 @@ int main(int argc, const char * argv[])
             
             if(i%3 == 2)
             {
-                //  cout << memRefs[i/3] << endl;
                 countMemRefs++;
             }
         }
@@ -267,9 +266,8 @@ int main(int argc, const char * argv[])
             binaryMemRefs[i] = hexStringToBinaryString(memRefs[i]);
         }
         
-        //less than 60,000?
-        cout << "\n\nSimulation " << sim << " with " << filename << endl;
-        cout << "Num memrefs is " << countMemRefs << endl;
+
+        cout << "\n\nSimulation " << sim+1 << " with " << filename << endl;
         
         //creates array of Queues for each line of cache
         CacheSetQueue* cacheLines = new CacheSetQueue[K];
@@ -284,21 +282,22 @@ int main(int argc, const char * argv[])
             int lineIndex = binaryStringToDecimal(binaryMemRefs[i].substr(20-numIndexBits, numIndexBits));  //extract index from address
             string tag = binaryMemRefs[i].substr(0, 20-numIndexBits);  //extract tag from address
             
-            if(cacheLines[lineIndex].addToQueue(tag))  //
+            if(cacheLines[lineIndex].addToQueue(tag))
                 hitCount++;
             else
                 missCount++;
         }
-        
-        /*for (int i = 0; i < cacheLines[1].getSize(); i++)
-        {
-            cout << cacheLines[1].getTag(i) << endl;
-        }*/
+    
+        double missRate = (double)missCount/(double)(countMemRefs*10) * 100;  //divide misses by total number of memory references in original file
+    
+        if(isFIFO)
+            cout << "Replacement Policy: FIFO" << endl;
+        else
+            cout << "Replacement Policy: LRU" << endl;
         cout << "Number of Sets: " << N << endl;
         cout << "Number of Lines per Set: " << K << endl;
-        cout << "Number of Misses: " << missCount << endl;
-        cout << "Number of Hits: " << hitCount << endl;
-        
+        cout << "Miss rate: " << setprecision(4) << missRate << "%" << endl;
+
     }
     
     return 0;
